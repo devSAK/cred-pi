@@ -63,7 +63,8 @@ const config = {
   },
 };
 
-const index = () => {
+// const index = () => {
+  const Container = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -174,4 +175,5 @@ const index = () => {
   );
 };
 
-export default index;
+// export default index;
+export default Container;
