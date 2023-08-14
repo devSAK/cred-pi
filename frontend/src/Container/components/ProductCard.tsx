@@ -39,7 +39,7 @@ const ProductCard = (props: Props) => {
           <Button variant="outlined" size="small" onClick={props.onClickBuy}>Order</Button>
         </div>
 
-        <span style={{ fontSize: "0.6em" }}>{props.pictureCaption}</span>
+        {/* <span style={{ fontSize: "0.6em" }}>{props.pictureCaption}</span> */}
       </div>
     </>
   );
