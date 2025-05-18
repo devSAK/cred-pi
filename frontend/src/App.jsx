@@ -16,7 +16,7 @@ function App() {
         scopes,
         async (paymentData) => {
           const response = await fetch(
-            "https://5b30-2405-201-8023-e9d6-4d5e-49e5-dce0-457a.ngrok-free.app/api/payments/create",
+            "https://pi-backend.onrender.com/api/payments/create",
             {
               method: "POST",
               headers: {
