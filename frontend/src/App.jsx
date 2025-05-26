@@ -8,14 +8,23 @@ const App = () => {
 
   useEffect(() => {
     console.log("PiNetwork object available:", !!window.PiNetwork);
+    // Initialize the SDK first
+    if (window.Pi) {
+      window.Pi.init({
+        version: "2.0",
+        sandbox: true, // Set to false in production
+      });
+    }
   }, []);
 
   const handleLogin = async () => {
     try {
-      const scopes = ["username"]; // add 'payments' if needed
+      // Then authenticate
+      const scopes = ["username"]; // or add 'payments' if needed
       const authResult = await Pi.authenticate(scopes);
       const { accessToken } = authResult;
 
+      // Send token to backend for verification
       const response = await axios.post(
         "https://cred-pi.onrender.com/verify-user",
         { accessToken }
@@ -27,7 +36,7 @@ const App = () => {
         alert("Verification failed");
       }
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login error:", error);
       alert("Login failed: " + error.message);
     }
   };
