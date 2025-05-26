@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pi } from "@pinetwork-js/sdk";
 import axios from "axios";
 import Home from "./components/Home";
@@ -6,12 +6,14 @@ import Home from "./components/Home";
 const App = () => {
   const [user, setUser] = useState(null);
 
-  const handleLogin = async () => {
-    const scopes = ["username"];
-    const pi = new Pi();
+  useEffect(() => {
+    console.log("PiNetwork object available:", !!window.PiNetwork);
+  }, []);
 
+  const handleLogin = async () => {
     try {
-      const authResult = await pi.authenticate(scopes);
+      const scopes = ["username"]; // add 'payments' if needed
+      const authResult = await Pi.authenticate(scopes);
       const { accessToken } = authResult;
 
       const response = await axios.post(
@@ -26,6 +28,7 @@ const App = () => {
       }
     } catch (error) {
       console.error("Login failed", error);
+      alert("Login failed: " + error.message);
     }
   };
 
