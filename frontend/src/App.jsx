@@ -20,7 +20,7 @@ const App = () => {
   const handleLogin = async () => {
     try {
       // Then authenticate
-      const scopes = ["username"]; // or add 'payments' if needed
+      const scopes = ["username", "payments"]; // or add 'payments' if needed
       const authResult = await Pi.authenticate(scopes);
       const { accessToken } = authResult;
 
