@@ -15,7 +15,7 @@ const App = () => {
       const { accessToken } = authResult;
 
       const response = await axios.post(
-        "http://<your-local-ip>:5000/verify-user",
+        "https://cred-pi.onrender.com/verify-user",
         { accessToken }
       );
 
