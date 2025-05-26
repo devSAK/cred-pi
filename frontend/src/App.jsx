@@ -1,57 +1,43 @@
-import { useEffect } from "react";
+import React, { useState } from "react";
+import { Pi } from "@pinetwork-js/sdk";
+import axios from "axios";
+import Home from "./components/Home";
 
-function App() {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.minepi.com/pi-sdk.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
+const App = () => {
+  const [user, setUser] = useState(null);
 
-  const initiatePiPayment = async () => {
+  const handleLogin = async () => {
+    const scopes = ["username"];
+    const pi = new Pi();
+
     try {
-      const scopes = ["payments"];
+      const authResult = await pi.authenticate(scopes);
+      const { accessToken } = authResult;
 
-      const payment = await window.Pi.authenticate(
-        scopes,
-        async (paymentData) => {
-          const response = await fetch(
-            "https://pi-backend.onrender.com/api/payments/create",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                user_uid: paymentData.user.uid,
-                amount: 0.001,
-                memo: "Test Payment",
-                metadata: { item: "Sample" },
-              }),
-            }
-          );
-
-          return await response.json();
-        }
+      const response = await axios.post(
+        "http://<your-local-ip>:5000/verify-user",
+        { accessToken }
       );
 
-      console.log("Payment Success:", payment);
+      if (response.data.verified) {
+        setUser(response.data.user);
+      } else {
+        alert("Verification failed");
+      }
     } catch (error) {
-      console.error("Payment Error:", error);
+      console.error("Login failed", error);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Pi Payment Integration</h1>
-      <button
-        className="bg-purple-600 text-white px-4 py-2 rounded-xl"
-        onClick={initiatePiPayment}
-      >
-        Pay with Pi
-      </button>
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      {!user ? (
+        <button onClick={handleLogin}>Login with Pi</button>
+      ) : (
+        <Home user={user} />
+      )}
     </div>
   );
-}
+};
 
 export default App;

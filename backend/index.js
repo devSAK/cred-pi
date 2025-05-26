@@ -1,48 +1,45 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
-const PORT = 5000;
-
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/payments/create", async (req, res) => {
-  const { user_uid, amount, memo, metadata } = req.body;
+const PORT = 5000;
+
+app.post("/verify-user", async (req, res) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    return res
+      .status(400)
+      .json({ verified: false, error: "Missing accessToken" });
+  }
 
   try {
-    const response = await fetch("https://api.minepi.com/payments", {
-      method: "POST",
+    const response = await axios.get("https://api.minepi.com/v2/me", {
       headers: {
-        Authorization: `Key ${process.env.PI_API_KEY}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({
-        amount,
-        memo,
-        metadata,
-        uid: user_uid,
-      }),
     });
 
-    const data = await response.json();
-    res.json(data);
+    // This response contains real user info from Pi servers
+    const user = response.data;
+
+    return res.status(200).json({ verified: true, user });
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Payment creation failed", details: err.message });
+    console.error(
+      "Token verification failed:",
+      err.response?.data || err.message
+    );
+    return res
+      .status(401)
+      .json({ verified: false, error: "Invalid access token" });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-});
-
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
-  // Optionally exit process if needed:
-  // process.exit(1);
 });
