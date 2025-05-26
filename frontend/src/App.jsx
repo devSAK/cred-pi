@@ -12,7 +12,7 @@ const App = () => {
     if (window.Pi) {
       window.Pi.init({
         version: "2.0",
-        sandbox: true, // Set to false in production
+        sandbox: false, // Set to false in production
       });
     }
   }, []);
