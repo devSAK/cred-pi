@@ -40,6 +40,36 @@ app.post("/verify-user", async (req, res) => {
   }
 });
 
+// Handle Pi payment approval
+app.post("/payment-approve", async (req, res) => {
+  const { paymentId } = req.body;
+
+  if (!paymentId) {
+    return res.status(400).json({ success: false, error: "Missing paymentId" });
+  }
+
+  console.log("Payment Approved:", paymentId);
+
+  // Here you can store the paymentId, log, or perform checks
+  return res.status(200).json({ success: true });
+});
+
+// Handle Pi payment completion
+app.post("/payment-complete", async (req, res) => {
+  const { paymentId, txid } = req.body;
+
+  if (!paymentId || !txid) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing paymentId or txid" });
+  }
+
+  console.log("Payment Completed:", paymentId, txid);
+
+  // You can confirm or record the transaction here (e.g., in DB)
+  return res.status(200).json({ success: true });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
